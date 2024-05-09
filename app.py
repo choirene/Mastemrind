@@ -3,26 +3,6 @@ import json
 import os
 from dotenv import load_dotenv
 
-# # response = requests.get("https://www.random.org/integers/?num=4&min=0&max=7&col=1&base=10&format=plain&rnd=new")
-# url = "https://api.random.org/json-rpc/4/invoke"
-# params = {
-#     {
-#     "jsonrpc": "2.0",
-#     "method": "generateIntegers",
-#     "params": {
-#         "apiKey": "6b1e65b9-4186-45c2-8981-b77a9842c4f0",
-#         "n": 6,
-#         "min": 1,
-#         "max": 6,
-#         "replacement": True
-#     },
-#     "id": 42
-# }
-# }
-# reponse = requests.get(url, params)
-# print(response.status_code)
-# print(response)
-
 load_dotenv()
 
 def generate_random_integers(api_key, num, min_val, max_val):
@@ -52,18 +32,6 @@ def generate_random_integers(api_key, num, min_val, max_val):
             return result['result']['random']['data']
     else:
         print("Failed to connect. Status code:", response.status_code)
-
-
-# api_key = os.getenv("API_KEY")
-# if api_key is None:
-#     print("API key not found. Please set it in the .env file.")
-# else:
-#     num = 4  # Number of random integers to generate
-#     min_val = 0  # Minimum value of the random integers
-#     max_val = 7  # Maximum value of the random integers
-
-#     random_integers = generate_random_integers(api_key, num, min_val, max_val)
-#     print("Generated Random Integers:", random_integers)
 
 
 
