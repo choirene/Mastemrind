@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 index_bp = Blueprint("index", __name__)
-home_bp =Blueprint("home", __name__)
+home_bp = Blueprint("home", __name__)
 
 @index_bp.route("/index", methods=["GET"])
 def index():
