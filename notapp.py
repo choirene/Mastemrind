@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def generate_random_integers(api_key, num, min_val, max_val):
+def generate_random_integers(api_key, num, min_val, max_val, replacement):
     url = 'https://api.random.org/json-rpc/4/invoke'
     headers = {'content-type': 'application/json'}
 
@@ -19,7 +19,8 @@ def generate_random_integers(api_key, num, min_val, max_val):
             "max": max_val,
             "base": 10,
         },
-        "id": 42
+        "id": 42,
+        "replacement": replacement,
     }
 
     response = requests.post(url, data=json.dumps(params), headers=headers)
@@ -35,7 +36,6 @@ def generate_random_integers(api_key, num, min_val, max_val):
 
 
 
-
 def game_setup():
     print("Welcome to mastermind! Please try guessing the 4 digit number.")
     api_key = os.getenv("API_KEY")
@@ -45,9 +45,9 @@ def game_setup():
         num = 4  # Number of random integers to generate
         min_val = 0  # Minimum value of the random integers
         max_val = 7  # Maximum value of the random integers
+        replacement = True # True = lets nums repeat. False = nums will not repeat
 
-        goal = generate_random_integers(api_key, num, min_val, max_val)
-        print(goal)
+        goal = generate_random_integers(api_key, num, min_val, max_val, replacement)
 
     guesses = 0
     player_turn(goal, guesses)
