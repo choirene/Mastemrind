@@ -54,7 +54,7 @@ def game_setup():
 def player_turn(solution, guesses):
     player_guess = input("Guess a number \n")
 
-    while not validate_player_guess(player_guess):
+    while not ((len(player_guess) == 4) and (player_guess.isnumeric())):
         player_guess = input("Guess a valid 4 digit number. \n")
     
     player_guess = Number(string_num=player_guess)
@@ -71,11 +71,9 @@ def player_turn(solution, guesses):
 
         print(f"You have guessed {format_output(correct_nums)} correctly. You have {format_output(correct_places)} in the correct place.")
         guesses += 1
+        print(f"{10-guesses} guesses remaining.")
         print("~~~~~~")
         player_turn(solution, guesses)
-
-def validate_player_guess(guess):
-    return ((len(guess) == 4) and (guess.isnumeric()))
 
 def judge_guess(solution, player_guess):
     correct_nums = 0
@@ -105,7 +103,4 @@ def game_end(player_win):
     else:
         print("Thanks for playing!")
 
-
 game_setup()
-# issues : repeat numbers in guess and solution.. player guess format.. grammar changes for plural..
-# edge case -> if a player guesses an int twice -> wrong # of correct digits
