@@ -2,7 +2,7 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
-from solution import Solution
+from number import Number
 
 load_dotenv()
 
@@ -46,7 +46,7 @@ def game_setup():
         max_val = 7  # Maximum value of the random integers
         replacement = True # True = lets nums repeat. False = nums will not repeat
 
-        solution = Solution(generate_random_integers(api_key, num, min_val, max_val, replacement))
+        solution = Number(num_list=generate_random_integers(api_key, num, min_val, max_val, replacement))
 
         guesses = 0
         player_turn(solution, guesses)
@@ -56,14 +56,17 @@ def player_turn(solution, guesses):
 
     while not validate_player_guess(player_guess):
         player_guess = input("Guess a valid 4 digit number. \n")
+    
+    player_guess = Number(string_num=player_guess)
 
-    if player_guess == solution.string_num:
+    if player_guess.string_num == solution.string_num:
         game_end(True)
     elif guesses == 10:
         print(f"The number was {solution.string_num}")
         game_end(False)
     else:
-        (correct_nums, correct_places) = judge_guess(solution.string_num, player_guess)
+        (correct_nums, correct_places) = judge_guess(solution, player_guess)
+        print(f"Solution is {solution.string_num}") #DELETE THIS!!!
         print(f"You have guessed {correct_nums} numbers correctly. {correct_places} are in the correct place.")
         guesses += 1
         print("~~~~~~")
@@ -75,13 +78,19 @@ def validate_player_guess(guess):
 def judge_guess(solution, player_guess):
     correct_nums = 0
     correct_places = 0
+    index = 0
     
-    for num in range(len(solution)):
-        if solution[num] == player_guess[num]:
-            correct_places += 1
-        if player_guess[num] in solution:
-            correct_nums += 1
-    return(correct_nums, correct_places)
+    for num in player_guess.num_list:
+        if num in solution.freq_dict:
+            if player_guess.freq_dict[num] > solution.freq_dict[num]:
+                correct_nums += (solution.freq_dict[num] / player_guess.freq_dict[num])
+            else:
+                correct_nums += 1
+
+            if solution.num_list[index] == player_guess.num_list[index]:
+                correct_places += 1
+        index += 1
+    return(int(correct_nums), correct_places)
 
 def game_end(player_win):
     if player_win:
