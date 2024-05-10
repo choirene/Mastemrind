@@ -66,8 +66,10 @@ def player_turn(solution, guesses):
         game_end(False)
     else:
         (correct_nums, correct_places) = judge_guess(solution, player_guess)
-        print(f"Solution is {solution.string_num}") #DELETE THIS!!!
-        print(f"You have guessed {correct_nums} numbers correctly. {correct_places} are in the correct place.")
+
+        format_output = lambda num: f"{num} number" if num == 1 else f"{num} numbers"
+
+        print(f"You have guessed {format_output(correct_nums)} correctly. You have {format_output(correct_places)} in the correct place.")
         guesses += 1
         print("~~~~~~")
         player_turn(solution, guesses)
