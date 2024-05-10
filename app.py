@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def generate_random_integers(api_key, num, min_val, max_val):
+def generate_random_integers(api_key, num, min_val, max_val, replacement):
     url = 'https://api.random.org/json-rpc/4/invoke'
     headers = {'content-type': 'application/json'}
 
@@ -19,7 +19,8 @@ def generate_random_integers(api_key, num, min_val, max_val):
             "max": max_val,
             "base": 10,
         },
-        "id": 42
+        "id": 42,
+        "replacement": replacement,
     }
 
     response = requests.post(url, data=json.dumps(params), headers=headers)
@@ -35,7 +36,6 @@ def generate_random_integers(api_key, num, min_val, max_val):
 
 
 
-
 def game_setup():
     print("Welcome to mastermind! Please try guessing the 4 digit number.")
     api_key = os.getenv("API_KEY")
@@ -45,52 +45,49 @@ def game_setup():
         num = 4  # Number of random integers to generate
         min_val = 0  # Minimum value of the random integers
         max_val = 7  # Maximum value of the random integers
+        replacement = True # True = lets nums repeat. False = nums will not repeat
 
-        goal = generate_random_integers(api_key, num, min_val, max_val)
-        print(goal)
+        int_solution = generate_random_integers(api_key, num, min_val, max_val, replacement)
 
-    guesses = 0
-    player_turn(goal, guesses)
+        string_solution = ''
+        for num in solution:
+            string_solution += str(num)
 
-def player_turn(goal, guesses):
+        guesses = 0
+        player_turn(string_solution, guesses)
+
+def player_turn(solution, guesses):
     player_guess = input("Guess a number \n")
 
     while not validate_player_guess(player_guess):
         player_guess = input("Guess a valid 4 digit number. \n")
     
-    # do try/except?
 
-    # player_guess = int(player_guess)
-    str_goal = ''
-    for num in goal:
-        str_goal += str(num)
-
-    print(str_goal)
-    if player_guess == str_goal:
+    if player_guess == solution:
         game_end(True)
     elif guesses == 10:
-        print(f"The number was {str_goal}")
+        print(f"The number was {solution}")
         game_end(False)
     else:
-        judge_list = judge_guess(str_goal, player_guess)
-        print(f"You have guessed {judge_list[0]} numbers correctly. {judge_list[1]} are in the correct place.")
+        (correct_nums, correct_places) = judge_guess(solution, player_guess)
+        print(f"You have guessed {correct_nums} numbers correctly. {correct_places} are in the correct place.")
         guesses += 1
         print("~~~~~~")
-        player_turn(goal,guesses)
+        player_turn(solution, guesses)
 
 def validate_player_guess(guess):
     return ((len(guess) == 4) and (guess.isnumeric()))
 
-def judge_guess(goal, player_guess):
+def judge_guess(solution, player_guess):
     correct_nums = 0
     correct_places = 0
     
-    for num in range(len(goal)):
-        if goal[num] == player_guess[num]:
+    for num in range(len(solution)):
+        if solution[num] == player_guess[num]:
             correct_places += 1
-        if player_guess[num] in goal:
+        if player_guess[num] in solution:
             correct_nums += 1
-    return[correct_nums, correct_places]    
+    return(correct_nums, correct_places)
 
 def game_end(player_win):
     if player_win:
@@ -105,4 +102,5 @@ def game_end(player_win):
 
 
 game_setup()
-# issues : repeat numbers in guess and goal.. player guess format.. grammar changes for plural..
+# issues : repeat numbers in guess and solution.. player guess format.. grammar changes for plural..
+# edge case -> if a player guesses an int twice -> wrong # of correct digits
