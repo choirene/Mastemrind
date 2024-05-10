@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from solution import Solution
 
 load_dotenv()
 
@@ -34,8 +35,6 @@ def generate_random_integers(api_key, num, min_val, max_val, replacement):
     else:
         print("Failed to connect. Status code:", response.status_code)
 
-
-
 def game_setup():
     print("Welcome to mastermind! Please try guessing the 4 digit number.")
     api_key = os.getenv("API_KEY")
@@ -47,29 +46,24 @@ def game_setup():
         max_val = 7  # Maximum value of the random integers
         replacement = True # True = lets nums repeat. False = nums will not repeat
 
-        int_solution = generate_random_integers(api_key, num, min_val, max_val, replacement)
-
-        string_solution = ''
-        for num in solution:
-            string_solution += str(num)
+        solution = Solution(generate_random_integers(api_key, num, min_val, max_val, replacement))
 
         guesses = 0
-        player_turn(string_solution, guesses)
+        player_turn(solution, guesses)
 
 def player_turn(solution, guesses):
     player_guess = input("Guess a number \n")
 
     while not validate_player_guess(player_guess):
         player_guess = input("Guess a valid 4 digit number. \n")
-    
 
-    if player_guess == solution:
+    if player_guess == solution.string_num:
         game_end(True)
     elif guesses == 10:
-        print(f"The number was {solution}")
+        print(f"The number was {solution.string_num}")
         game_end(False)
     else:
-        (correct_nums, correct_places) = judge_guess(solution, player_guess)
+        (correct_nums, correct_places) = judge_guess(solution.string_num, player_guess)
         print(f"You have guessed {correct_nums} numbers correctly. {correct_places} are in the correct place.")
         guesses += 1
         print("~~~~~~")
