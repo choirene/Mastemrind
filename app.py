@@ -47,11 +47,9 @@ def game_setup():
         replacement = True # True = lets nums repeat. False = nums will not repeat
 
         solution = Number(num_list=generate_random_integers(api_key, num, min_val, max_val, replacement))
+        player_turn(solution, 0)
 
-        guesses = 0
-        player_turn(solution, guesses)
-
-def player_turn(solution, guesses):
+def player_turn(solution, guesses, max_guesses=10):
     player_guess = input("Guess a number \n")
 
     while not ((len(player_guess) == 4) and (player_guess.isnumeric())):
@@ -61,7 +59,7 @@ def player_turn(solution, guesses):
 
     if player_guess.string_num == solution.string_num:
         game_end(True)
-    elif guesses == 10:
+    elif guesses == max_guesses:
         print(f"The number was {solution.string_num}")
         game_end(False)
     else:
@@ -71,7 +69,7 @@ def player_turn(solution, guesses):
 
         print(f"You have guessed {format_output(correct_nums)} correctly. You have {format_output(correct_places)} in the correct place.")
         guesses += 1
-        print(f"{10-guesses} guesses remaining.")
+        print(f"{max_guesses-guesses} guesses remaining.")
         print("~~~~~~")
         player_turn(solution, guesses)
 
